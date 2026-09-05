@@ -16,6 +16,7 @@ const links = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
   const scrollToEAs = () =>
     document
       .getElementById("algorithms")

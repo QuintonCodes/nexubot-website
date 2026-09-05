@@ -7,6 +7,7 @@ import { CheckoutModal } from "./checkout-modal";
 import { SuccessDashboard } from "./success-dashboard";
 
 type PurchaseContextValue = { openCheckout: (product: Product) => void };
+
 export const PurchaseContext = createContext<PurchaseContextValue | null>(null);
 
 export function PurchaseProvider({ children }: { children: ReactNode }) {
@@ -14,7 +15,9 @@ export function PurchaseProvider({ children }: { children: ReactNode }) {
   const [completedProduct, setCompletedProduct] = useState<Product | null>(
     null,
   );
+
   if (completedProduct) return <SuccessDashboard product={completedProduct} />;
+
   return (
     <PurchaseContext.Provider value={{ openCheckout: setProduct }}>
       {children}

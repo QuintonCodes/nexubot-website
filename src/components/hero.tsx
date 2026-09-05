@@ -1,8 +1,7 @@
 "use client";
 
 import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
-import type { Variants } from "motion/react";
-import { motion } from "motion/react";
+import { type Variants, motion } from "motion/react";
 
 import { SignalConsole } from "./signal-console";
 

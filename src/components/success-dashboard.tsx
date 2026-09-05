@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import type { Product } from "@/lib/products";
 import { metrics } from "@/lib/products";
 
-const LICENSE_KEY = "NXB-ICT-7F42-A91C-38DE";
+const LICENSE_KEY = "NEXU-1Z45-7F42-A91C-38DE";
 
 export function SuccessDashboard({ product }: { product: Product }) {
   async function copyLicenseKey() {

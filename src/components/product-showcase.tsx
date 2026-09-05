@@ -60,9 +60,6 @@ function ProductCard({ product }: { product: Product }) {
           </p>
           <p className="font-heading text-3xl font-extrabold text-foreground">
             {product.price}
-            <span className="ml-2 text-base font-semibold text-muted-foreground">
-              {product.priceUsd}
-            </span>
           </p>
         </div>
       </div>

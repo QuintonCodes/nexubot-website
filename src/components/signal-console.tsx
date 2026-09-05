@@ -15,6 +15,7 @@ import { useState } from "react";
 const bars = [
   38, 52, 44, 68, 56, 74, 62, 86, 70, 92, 78, 100, 88, 108, 96, 124, 112, 132,
 ];
+
 const modes = {
   ict: {
     name: "Nexubot ICT",
@@ -37,6 +38,7 @@ const modes = {
 export function SignalConsole() {
   const [mode, setMode] = useState<"ict" | "poi">("ict");
   const current = modes[mode];
+
   return (
     <div className="gradient-border glass-panel relative overflow-hidden rounded-2xl p-4 sm:p-5">
       <div className="absolute inset-0 grid-backdrop opacity-60" aria-hidden />

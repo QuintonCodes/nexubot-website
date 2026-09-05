@@ -1,7 +1,11 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
-import { CreditCard, KeyRound, MonitorCheck } from "lucide-react";
+import {
+  type LucideIcon,
+  CreditCard,
+  KeyRound,
+  MonitorCheck,
+} from "lucide-react";
 import { motion } from "motion/react";
 
 const steps: { icon: LucideIcon; step: string; title: string; body: string }[] =

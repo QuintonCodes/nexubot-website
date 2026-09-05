@@ -18,6 +18,7 @@ function EquityCurve({ curve }: { curve: number[] }) {
   const points = curve
     .map((v, i) => `${(i / (curve.length - 1)) * 100},${100 - v}`)
     .join(" ");
+
   return (
     <div className="relative h-44 overflow-hidden rounded-xl border border-border/60 bg-background/50 p-4 sm:h-52">
       <div
@@ -208,7 +209,7 @@ export function PerformanceMetrics() {
             <BarChart3 className="h-4 w-4 text-brand-blue" />
             Stats shown for Nexubot ICT and Nexubot POI only
             <span className="ml-auto hidden font-mono text-[10px] text-brand-green sm:block">
-              REPORT ID: NX-{active + 1}042
+              REPORT ID: NEXU-{active + 1}042
             </span>
           </div>
         </motion.div>
