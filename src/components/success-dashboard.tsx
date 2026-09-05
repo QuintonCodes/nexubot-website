@@ -25,7 +25,7 @@ export function SuccessDashboard({ product }: { product: Product }) {
   const cards = [
     ["ROI", metrics.roi],
     ["Win rate", `${metrics.winRate}%`],
-    ["Net profit", metrics.netProfit],
+    ["Profit Factor", metrics.profitFactor],
     ["Max drawdown", metrics.maxDrawdownPct],
   ];
 
