@@ -1,102 +1,84 @@
-export type Spec = {
-  label: string
-  value: string
-}
-
 export type Product = {
-  id: string
-  name: string
-  tagline: string
-  badge?: string
-  originalPrice: string
-  promoPrice: string
-  usdPrice: string
-  featured?: boolean
-  tags: string[]
-  description: string
-  specs: Spec[]
-  included: string[]
-}
+  id: string;
+  name: string;
+  tagline: string;
+  badge: string;
+  originalPrice: string;
+  price: string;
+  tags: string[];
+};
 
 export const products: Product[] = [
   {
-    id: 'nexubot-ict',
-    name: 'Nexubot ICT',
-    tagline: 'Institutional order-flow automation',
-    badge: '50% OFF LAUNCH PROMO',
-    originalPrice: 'R5999.00',
-    promoPrice: 'R2999.00',
-    usdPrice: '$187',
-    featured: true,
-    description:
-      'A precision execution engine built on Inner Circle Trader concepts, mapping smart-money structure and optimal trade entries with adaptive risk control.',
+    id: "nexubot-ict",
+    name: "Nexubot ICT",
+    tagline:
+      "Precision ICT execution engine built for OTE entries and Smart Money structure on XAUUSD Gold.",
+    badge: "50% OFF LAUNCH PROMO",
+    originalPrice: "R5999.00",
+    price: "R2999.00",
     tags: [
-      'ICT OTE Strategy',
-      'SMC Structure Detection',
-      'Dynamic Loss-Streak Protection',
-      'Multi-TP Target Management',
-      'Session-Based Filtering',
-      'Auto Lot Sizing',
-    ],
-    specs: [
-      { label: 'Platform', value: 'MetaTrader 5' },
-      { label: 'Recommended Pairs', value: 'XAUUSD, EURUSD, GBPUSD' },
-      { label: 'Timeframes', value: 'M15 / H1 / H4' },
-      { label: 'Min. Deposit', value: '$3,000 recommended' },
-      { label: 'License Type', value: 'Hardware-locked EA' },
-      { label: 'Terminals', value: '1 active terminal' },
-    ],
-    included: [
-      'Compiled Nexubot_ICT.ex5 expert advisor',
-      'Cryptographic license key (NEXU-)',
-      'Nexubot Setup Guide (PDF)',
-      'Lifetime updates & priority support',
+      "ICT OTE Strategy",
+      "SMC Structure Detection",
+      "Dynamic Loss-Streak Protection",
+      "Multi-TP Target Management",
     ],
   },
-]
+  {
+    id: "nexubot-poi",
+    name: "Nexubot POI",
+    tagline:
+      "Reversal-entry Expert Advisor that hunts Order Blocks and Liquidity Sweeps on XAUUSD Gold.",
+    badge: "50% OFF LAUNCH PROMO",
+    originalPrice: "R5999.00",
+    price: "R2999.00",
+    tags: [
+      "Order Block Reversals",
+      "Liquidity Sweep Entries",
+      "SMC Structure Detection",
+      "Dynamic Loss-Streak Protection",
+      "Multi-TP Target Management",
+    ],
+  },
+];
 
-export type Metric = {
-  label: string
-  value: string
-  sub?: string
-  accent?: 'green' | 'blue' | 'neutral'
-}
+export const metrics = {
+  roi: "258.58%",
+  initial: "$3,000.00",
+  final: "$10,757.44",
+  netProfit: "$7,757.44",
+  winRate: 77.31,
+  winTrades: 92,
+  totalTrades: 119,
+  maxDrawdownPct: "19.70%",
+  maxDrawdownValue: "$1,983.23",
+};
 
-export const metrics: Metric[] = [
-  {
-    label: 'Return on Investment',
-    value: '258.58%',
-    sub: 'Initial $3,000.00 → Final $10,757.44',
-    accent: 'green',
+export const advisorMetrics = {
+  ict: {
+    name: "Nexubot ICT",
+    subtitle: "OTE continuation system",
+    roi: metrics.roi,
+    profit: metrics.netProfit,
+    win: metrics.winRate,
+    dd: metrics.maxDrawdownPct,
+    trades: metrics.totalTrades,
+    curve: [
+      28, 30, 29, 34, 37, 35, 42, 45, 47, 46, 54, 57, 61, 60, 68, 72, 75, 82,
+      88, 94,
+    ],
   },
-  {
-    label: 'Total Net Profit',
-    value: '$7,757.44',
-    sub: 'Verified backtest, 12-month window',
-    accent: 'green',
+  poi: {
+    name: "Nexubot POI",
+    subtitle: "Order Block reversal system",
+    roi: "+142.36%",
+    profit: "$4,270.80",
+    win: 71.42,
+    dd: "14.28%",
+    trades: 84,
+    curve: [
+      28, 27, 33, 31, 38, 43, 41, 48, 52, 50, 58, 63, 61, 69, 74, 78, 76, 84,
+      89, 96,
+    ],
   },
-  {
-    label: 'Win Rate',
-    value: '77.31%',
-    sub: '92 of 119 trades won',
-    accent: 'green',
-  },
-  {
-    label: 'Max Equity Drawdown',
-    value: '19.70%',
-    sub: '$1,983.23 peak-to-trough',
-    accent: 'blue',
-  },
-  {
-    label: 'Total Trades',
-    value: '119',
-    sub: 'Executions across the period',
-    accent: 'neutral',
-  },
-  {
-    label: 'Profit Factor',
-    value: '3.42',
-    sub: 'Gross profit / gross loss',
-    accent: 'neutral',
-  },
-]
+};

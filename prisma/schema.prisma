@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Licenses {
+  id        String   @id @default(cuid())
+  userId    String
+  licenseKey String  @unique
+  productName String
+  maxTerminals Int @default(1)
+  isActive Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Transactions {
+  id        String   @id @default(cuid())
+  userId    String
+  licenseId String
+  transactionId String @unique // Peach Payments Transaction ID
+  amount    Float
+  status    TransactionStatus @default(PENDING)
+  createdAt DateTime @default(now())
+}

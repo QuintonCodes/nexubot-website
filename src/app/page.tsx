@@ -1,45 +1,22 @@
-"use client";
+import { Footer } from "@/components/footer";
+import { Hero } from "@/components/hero";
+import { Licensing } from "@/components/licensing";
+import { Navbar } from "@/components/navbar";
+import { PerformanceMetrics } from "@/components/performance-metrics";
+import { ProductShowcase } from "@/components/product-showcase";
+import { PurchaseProvider } from "@/components/purchase-context";
 
-import { useCallback, useState } from "react";
-
-import { CheckoutModal } from "@/components/nexubot/checkout-modal";
-import { Footer } from "@/components/nexubot/footer";
-import { Hero } from "@/components/nexubot/hero";
-import { Licensing } from "@/components/nexubot/licensing";
-import { Metrics } from "@/components/nexubot/metrics";
-import { Navbar } from "@/components/nexubot/navbar";
-import { ProductGrid } from "@/components/nexubot/product-grid";
-import { products, type Product } from "@/lib/products";
-
-export default function HomePage() {
-  const [selected, setSelected] = useState<Product | null>(null);
-  const [open, setOpen] = useState(false);
-
-  const openCheckout = useCallback((p: Product) => {
-    setSelected(p);
-    setOpen(true);
-  }, []);
-
-  const scrollToAlgorithms = useCallback(() => {
-    document
-      .getElementById("algorithms")
-      ?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
+export default function Page() {
   return (
-    <main className="relative min-h-screen">
-      <Navbar onGetStarted={() => openCheckout(products[0])} />
-      <Hero onExplore={scrollToAlgorithms} />
-      <Metrics />
-      <ProductGrid onPurchase={openCheckout} />
-      <Licensing />
-      <Footer />
-
-      <CheckoutModal
-        product={selected}
-        open={open}
-        onClose={() => setOpen(false)}
-      />
-    </main>
+    <PurchaseProvider>
+      <div id="top" className="min-h-screen overflow-x-hidden bg-background">
+        <Navbar />
+        <Hero />
+        <PerformanceMetrics />
+        <ProductShowcase />
+        <Licensing />
+        <Footer />
+      </div>
+    </PurchaseProvider>
   );
 }
