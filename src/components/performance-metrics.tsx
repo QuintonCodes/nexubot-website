@@ -60,9 +60,9 @@ function EquityCurve({ curve }: { curve: number[] }) {
         />
       </svg>
       <div className="absolute bottom-2 left-4 right-4 flex justify-between font-mono text-[9px] text-muted-foreground">
-        <span>JAN 24</span>
-        <span>JUN 24</span>
-        <span>DEC 24</span>
+        <span>JAN 26</span>
+        <span>JUN 26</span>
+        <span>DEC 26</span>
       </div>
     </div>
   );
@@ -84,7 +84,7 @@ export function PerformanceMetrics() {
           className="mx-auto mb-12 max-w-2xl text-center"
         >
           <span className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
-            Performance Lab · verified reports
+            Performance Lab · Historical Backtest Data
           </span>
           <h2 className="mt-3 text-balance font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">
             Two systems. One focused market.
@@ -133,7 +133,7 @@ export function PerformanceMetrics() {
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-brand-green" />
                 <span className="font-mono text-[10px] uppercase tracking-widest text-brand-green">
-                  Verified strategy report
+                  Strategy Tester Report
                 </span>
               </div>
               <h3 className="mt-2 font-heading text-2xl font-extrabold">
@@ -163,7 +163,7 @@ export function PerformanceMetrics() {
             <div className="grid grid-cols-2 gap-3">
               {[
                 {
-                  label: "Net profit",
+                  label: "Profit Factor",
                   value: advisor.profit,
                   Icon: TrendingUp,
                   color: "text-brand-green",
@@ -212,6 +212,11 @@ export function PerformanceMetrics() {
               REPORT ID: NEXU-{active + 1}042
             </span>
           </div>
+          <p className="mt-5 text-[10px] italic leading-tight text-muted-foreground/80">
+            * Based on historical simulated backtesting. Hypothetical or
+            simulated performance results have certain inherent limitations and
+            do not guarantee future live trading results.
+          </p>
         </motion.div>
       </div>
     </section>

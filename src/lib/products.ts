@@ -33,8 +33,7 @@ export const products: Product[] = [
     originalPrice: "R5999.00",
     price: "R2999.00",
     tags: [
-      "Order Block Reversals",
-      "Liquidity Sweep Entries",
+      "Order Block + Liquidity Reversals",
       "SMC Structure Detection",
       "Dynamic Loss-Streak Protection",
       "Multi-TP Target Management",
@@ -44,14 +43,11 @@ export const products: Product[] = [
 
 export const metrics = {
   roi: "258.58%",
-  initial: "$3,000.00",
-  final: "$10,757.44",
-  netProfit: "$7,757.44",
+  profitFactor: "2.42",
   winRate: 77.31,
   winTrades: 92,
   totalTrades: 119,
   maxDrawdownPct: "19.70%",
-  maxDrawdownValue: "$1,983.23",
 };
 
 export const advisorMetrics = {
@@ -59,7 +55,7 @@ export const advisorMetrics = {
     name: "Nexubot ICT",
     subtitle: "OTE continuation system",
     roi: metrics.roi,
-    profit: metrics.netProfit,
+    profit: metrics.profitFactor,
     win: metrics.winRate,
     dd: metrics.maxDrawdownPct,
     trades: metrics.totalTrades,
@@ -72,7 +68,7 @@ export const advisorMetrics = {
     name: "Nexubot POI",
     subtitle: "Order Block reversal system",
     roi: "+142.36%",
-    profit: "$4,270.80",
+    profit: "1.95",
     win: 71.42,
     dd: "14.28%",
     trades: 84,

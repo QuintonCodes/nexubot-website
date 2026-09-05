@@ -13,9 +13,12 @@ export function Logo({ className }: { className?: string }) {
         className="size-12"
         priority
       />
-      <span className="font-heading text-xl font-extrabold tracking-tight text-foreground">
-        <span className="text-brand-blue">Nexu</span>
-        <span className="text-brand-green">bot</span>
+      <span className="font-heading text-xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+        <div>
+          <span className="text-brand-blue">Nexu</span>
+          <span className="text-brand-green">bot</span>
+        </div>
+        <span>Systems</span>
       </span>
     </div>
   );

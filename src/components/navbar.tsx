@@ -2,15 +2,16 @@
 
 import { Menu, X } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 
 const links = [
-  { label: "Algorithms", href: "#algorithms" },
-  { label: "Licensing", href: "#licensing" },
-  { label: "Performance", href: "#performance" },
+  { label: "Algorithms", href: "/#algorithms" },
+  { label: "Licensing", href: "/#licensing" },
+  { label: "Performance", href: "/#performance" },
 ];
 
 export function Navbar() {
@@ -44,19 +45,19 @@ export function Navbar() {
             : "bg-transparent",
         )}
       >
-        <a href="#top" aria-label="Nexubot home">
+        <Link href="/" aria-label="Nexubot home">
           <Logo />
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -84,14 +85,14 @@ export function Navbar() {
           className="glass-panel mx-3 mt-2 flex flex-col gap-1 rounded-2xl p-3 md:hidden"
         >
           {links.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <button
             onClick={() => {

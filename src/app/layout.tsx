@@ -3,6 +3,10 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Montserrat } from "next/font/google";
 import { Toaster } from "sonner";
 
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
+import { PurchaseProvider } from "@/components/purchase-context";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -19,7 +23,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Nexubot — Next-Generation Algorithmic Automation",
+  title: "Nexubot Systems — Next-Generation Algorithmic Automation",
   description:
     "Institutional-grade algorithmic trading systems. Verified backtested performance, database-verified licensing, and MetaTrader 5 deployment for serious traders.",
   keywords: [
@@ -29,10 +33,10 @@ export const metadata: Metadata = {
     "ICT strategy",
     "expert advisor",
     "automated trading",
-    "Nexubot",
+    "Nexubot Systems",
   ],
   openGraph: {
-    title: "Nexubot — Next-Generation Algorithmic Automation",
+    title: "Nexubot Systems — Next-Generation Algorithmic Automation",
     description:
       "Institutional-grade algorithmic trading systems with verified backtested performance.",
     type: "website",
@@ -40,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nexubot — Next-Generation Algorithmic Automation",
+    title: "Nexubot Systems — Next-Generation Algorithmic Automation",
     description:
       "Institutional-grade algorithmic trading systems with verified backtested performance.",
   },
@@ -61,16 +65,26 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${montserrat.variable} antialiased`}>
-        {children}
-        <Toaster
-          richColors
-          toastOptions={{
-            style: {
-              fontFamily: "var(--font-montserrat)",
-            },
-          }}
-        />
-        {process.env.NODE_ENV === "production" && <Analytics />}
+        <PurchaseProvider>
+          <div
+            id="top"
+            className="min-h-screen overflow-x-hidden bg-background"
+          >
+            <Navbar />
+            {children}
+            <Footer />
+          </div>
+
+          <Toaster
+            richColors
+            toastOptions={{
+              style: {
+                fontFamily: "var(--font-montserrat)",
+              },
+            }}
+          />
+          {process.env.NODE_ENV === "production" && <Analytics />}
+        </PurchaseProvider>
       </body>
     </html>
   );

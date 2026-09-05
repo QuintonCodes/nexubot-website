@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Logo } from "./logo";
 
 export function Footer() {
@@ -17,19 +19,19 @@ export function Footer() {
               <p className="text-sm font-semibold text-foreground">Product</p>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#algorithms" className="hover:text-foreground">
+                  <Link href="/#algorithms" className="hover:text-foreground">
                     Algorithms
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#performance" className="hover:text-foreground">
+                  <Link href="/#performance" className="hover:text-foreground">
                     Performance
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#licensing" className="hover:text-foreground">
+                  <Link href="/#licensing" className="hover:text-foreground">
                     Licensing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -37,19 +39,19 @@ export function Footer() {
               <p className="text-sm font-semibold text-foreground">Company</p>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-foreground">
+                  <Link href="/about" className="hover:text-foreground">
                     About
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-foreground">
+                  <Link href="/contact" className="hover:text-foreground">
                     Contact
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-foreground">
+                  <Link href="/support" className="hover:text-foreground">
                     Support
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -57,19 +59,22 @@ export function Footer() {
               <p className="text-sm font-semibold text-foreground">Legal</p>
               <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-foreground">
+                  <Link href="/terms" className="hover:text-foreground">
                     Terms
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-foreground">
+                  <Link href="/privacy" className="hover:text-foreground">
                     Privacy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-foreground">
+                  <Link
+                    href="/risk-disclosure"
+                    className="hover:text-foreground"
+                  >
                     Risk Disclosure
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
