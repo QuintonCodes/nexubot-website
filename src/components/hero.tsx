@@ -64,8 +64,8 @@ export function Hero() {
             animate="show"
             className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
-            Nexubot deploys institutional-grade Expert Advisors directly onto
-            MetaTrader 5 — engineered exclusively for XAUUSD Gold on the M5
+            Nexubot Systems deploys institutional-grade Expert Advisors directly
+            onto MetaTrader 5 — engineered exclusively for XAUUSD Gold on the M5
             chart with H1 higher-timeframe bias, adaptive risk management, and
             verified backtested performance.
           </motion.p>

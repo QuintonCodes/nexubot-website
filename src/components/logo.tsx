@@ -7,7 +7,7 @@ export function Logo({ className }: { className?: string }) {
     <div className={cn("flex items-center gap-2", className)}>
       <Image
         src="/nexubot-logo.svg"
-        alt="Nexubot"
+        alt="Nexubot Systems"
         width={48}
         height={48}
         className="size-12"

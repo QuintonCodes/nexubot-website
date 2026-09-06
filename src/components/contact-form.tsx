@@ -55,8 +55,8 @@ export function ContactForm() {
       </label>
       <label className="flex items-start gap-3 text-xs leading-5 text-muted-foreground">
         <input required type="checkbox" className="mt-1 accent-brand-green" />I
-        understand that Nexubot provides software tools, not financial advice,
-        and I will not include sensitive credentials.
+        understand that Nexubot Systems provides software tools, not financial
+        advice, and I will not include sensitive credentials.
       </label>
       <button className="cursor-pointer w-full rounded-xl bg-brand-green px-5 py-3 text-sm font-semibold text-background transition hover:brightness-110">
         Send message

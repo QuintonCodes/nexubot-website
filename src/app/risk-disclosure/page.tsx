@@ -38,14 +38,15 @@ export default function RiskDisclosurePage() {
         className="mb-14"
       >
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-brand-green">
-          NEXUBOT / RISK
+          NEXUBOT SYSTEMS / RISK
         </p>
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
           Risk disclosure
         </h1>
         <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-muted-foreground">
           Automated trading involves substantial risk. Read this disclosure
-          before purchasing, installing, or enabling any Nexubot Expert Advisor.
+          before purchasing, installing, or enabling any Nexubot Systems Expert
+          Advisor.
         </p>
       </motion.div>
       <div className="space-y-10">

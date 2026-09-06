@@ -8,7 +8,9 @@ export function Footer() {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
-            <Logo />
+            <Link href="/" aria-label="Nexubot Systems home">
+              <Logo />
+            </Link>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Institutional-grade algorithmic trading systems for MetaTrader 5.
               Precision execution, verified performance, zero emotion.
@@ -85,7 +87,7 @@ export function Footer() {
           <p className="text-xs leading-relaxed text-muted-foreground">
             Trading foreign exchange and derivatives carries a high level of
             risk and may not be suitable for all investors. Past performance is
-            not indicative of future results. Nexubot provides algorithmic tools
+            not indicative of future results. Nexubot Systems provides algorithmic tools
             only and does not constitute financial advice.
           </p>
           <p className="mt-4 text-xs text-muted-foreground">

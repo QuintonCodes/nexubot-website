@@ -71,6 +71,7 @@ function EquityCurve({ curve }: { curve: number[] }) {
 export function PerformanceMetrics() {
   const [active, setActive] = useState(0);
   const advisor = advisors[active];
+
   return (
     <section
       id="performance"
@@ -90,15 +91,15 @@ export function PerformanceMetrics() {
             Two systems. One focused market.
           </h2>
           <p className="mt-4 text-pretty text-muted-foreground">
-            Compare the live-ready performance profile of each Nexubot Expert
-            Advisor, built exclusively for XAUUSD Gold on the M5 chart with H1
-            higher-timeframe bias.
+            Compare the live-ready performance profile of each Nexubot Systems
+            Expert Advisor, built exclusively for XAUUSD Gold on the M5 chart
+            with H1 higher-timeframe bias.
           </p>
         </motion.div>
         <div
           className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-2"
           role="tablist"
-          aria-label="Nexubot Expert Advisors"
+          aria-label="Nexubot Systems Expert Advisors"
         >
           {advisors.map((item, i) => (
             <button

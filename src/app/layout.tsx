@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     description:
       "Institutional-grade algorithmic trading systems with verified backtested performance.",
     type: "website",
-    siteName: "Nexubot",
+    siteName: "Nexubot Systems",
   },
   twitter: {
     card: "summary_large_image",
@@ -66,25 +66,22 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${montserrat.variable} antialiased`}>
         <PurchaseProvider>
-          <div
-            id="top"
-            className="min-h-screen overflow-x-hidden bg-background"
-          >
+          <div className="min-h-screen overflow-x-hidden bg-background">
             <Navbar />
             {children}
             <Footer />
           </div>
-
-          <Toaster
-            richColors
-            toastOptions={{
-              style: {
-                fontFamily: "var(--font-montserrat)",
-              },
-            }}
-          />
-          {process.env.NODE_ENV === "production" && <Analytics />}
         </PurchaseProvider>
+
+        <Toaster
+          richColors
+          toastOptions={{
+            style: {
+              fontFamily: "var(--font-montserrat)",
+            },
+          }}
+        />
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   );

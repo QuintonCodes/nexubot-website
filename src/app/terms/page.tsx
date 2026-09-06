@@ -6,7 +6,7 @@ const sections = [
   {
     title: "Software licence",
     body: [
-      "Nexubot grants a limited, non-exclusive, non-transferable licence to use the purchased EA for its intended purpose. You may not resell, redistribute, reverse engineer, copy, or circumvent licence controls.",
+      "Nexubot Systems grants a limited, non-exclusive, non-transferable licence to use the purchased EA for its intended purpose. You may not resell, redistribute, reverse engineer, copy, or circumvent licence controls.",
     ],
   },
   {
@@ -38,14 +38,14 @@ export default function TermsPage() {
         className="mb-14"
       >
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-brand-green">
-          NEXUBOT / TERMS
+          NEXUBOT SYSTEMS / TERMS
         </p>
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
           Terms of use
         </h1>
         <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-muted-foreground">
-          These terms govern access to Nexubot software and website services. By
-          purchasing or using an EA, you acknowledge these terms.
+          These terms govern access to Nexubot Systems software and website
+          services. By purchasing or using an EA, you acknowledge these terms.
         </p>
       </motion.div>
       <div className="space-y-10">

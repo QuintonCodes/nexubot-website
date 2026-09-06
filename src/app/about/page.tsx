@@ -18,7 +18,7 @@ const sections = [
   {
     title: "What we do not provide",
     body: [
-      "Nexubot is not a broker, investment manager, portfolio manager, or financial adviser. Purchasing software does not guarantee profits, and users remain responsible for their account, broker, settings, and decisions.",
+      "Nexubot Systems is not a broker, investment manager, portfolio manager, or financial adviser. Purchasing software does not guarantee profits, and users remain responsible for their account, broker, settings, and decisions.",
     ],
   },
 ];
@@ -32,14 +32,14 @@ export default function AboutPage() {
         className="mb-14"
       >
         <p className="font-mono text-xs uppercase tracking-[0.28em] text-brand-green">
-          NEXUBOT / ABOUT
+          NEXUBOT SYSTEMS / ABOUT
         </p>
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
           Automation with a risk-aware edge.
         </h1>
         <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-muted-foreground">
-          Nexubot builds focused MetaTrader 5 Expert Advisors for XAUUSD (Gold)
-          on the M5 chart. Our systems turn structured market logic into
+          Nexubot Systems builds focused MetaTrader 5 Expert Advisors for XAUUSD
+          (Gold) on the M5 chart. Our systems turn structured market logic into
           repeatable execution without promising certainty.
         </p>
       </motion.div>

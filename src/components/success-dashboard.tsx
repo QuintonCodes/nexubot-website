@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Terminal,
 } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 import type { Product } from "@/lib/products";
@@ -37,7 +38,7 @@ export function SuccessDashboard({ product }: { product: Product }) {
             <CheckCircle2 className="h-3.5 w-3.5" /> Payment confirmed
           </div>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Your Nexubot is ready.
+            Your Nexubot Systems Expert Advisor is ready.
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Save your license key before leaving this page.
@@ -107,7 +108,7 @@ export function SuccessDashboard({ product }: { product: Product }) {
                 </li>
                 <li>
                   <span className="mr-3 font-mono text-brand-green">03</span>
-                  Paste your key into the Nexubot settings panel.
+                  Paste your key into the Nexubot EA settings panel.
                 </li>
               </ol>
             </div>
@@ -134,9 +135,11 @@ export function SuccessDashboard({ product }: { product: Product }) {
               <p className="mt-1 text-sm leading-6 text-muted-foreground">
                 Our technical team can help you get your first chart live.
               </p>
-              <button className="cursor-pointer mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-green">
-                Contact support <ExternalLink className="h-3.5 w-3.5" />
-              </button>
+              <Link href="/support">
+                <button className="cursor-pointer mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-green">
+                  Contact support <ExternalLink className="h-3.5 w-3.5" />
+                </button>
+              </Link>
             </div>
             <button className="cursor-pointer inline-flex items-center gap-2 text-sm font-semibold text-brand-green">
               <Download className="h-4 w-4" /> Download package

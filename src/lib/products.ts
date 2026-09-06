@@ -14,8 +14,8 @@ export const products: Product[] = [
     name: "Nexubot ICT",
     tagline:
       "Precision ICT execution engine built for OTE entries and Smart Money structure on XAUUSD Gold.",
-    badge: "50% OFF LAUNCH PROMO",
-    originalPrice: "R5999.00",
+    badge: "60% OFF LAUNCH PROMO",
+    originalPrice: "R4999.00",
     price: "R2999.00",
     tags: [
       "ICT OTE Strategy",
@@ -29,8 +29,8 @@ export const products: Product[] = [
     name: "Nexubot POI",
     tagline:
       "Reversal-entry Expert Advisor that hunts Order Blocks and Liquidity Sweeps on XAUUSD Gold.",
-    badge: "50% OFF LAUNCH PROMO",
-    originalPrice: "R5999.00",
+    badge: "60% OFF LAUNCH PROMO",
+    originalPrice: "R4999.00",
     price: "R2999.00",
     tags: [
       "Order Block + Liquidity Reversals",
@@ -42,7 +42,7 @@ export const products: Product[] = [
 ];
 
 export const metrics = {
-  roi: "258.58%",
+  roi: "+258.58%",
   profitFactor: "2.42",
   winRate: 77.31,
   winTrades: 92,

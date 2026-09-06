@@ -428,7 +428,10 @@ export function CheckoutModal({
                 ) : (
                   <div className="space-y-3">
                     {[
-                      { bank: "FNB", acc: "Nexubot Holdings · 6299 1180 774" },
+                      {
+                        bank: "FNB",
+                        acc: "Nexubot Systems Holdings · 6299 1180 774",
+                      },
                     ].map((b) => (
                       <div
                         key={b.bank}

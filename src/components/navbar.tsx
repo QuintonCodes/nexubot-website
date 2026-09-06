@@ -3,6 +3,7 @@
 import { Menu, X } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -18,10 +19,18 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const scrollToEAs = () =>
-    document
-      .getElementById("algorithms")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const router = useRouter();
+  const pathname = usePathname();
+
+  function scrollToEAs() {
+    if (pathname !== "/") {
+      router.push("/#algorithms");
+    } else {
+      document
+        .getElementById("algorithms")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -45,7 +54,7 @@ export function Navbar() {
             : "bg-transparent",
         )}
       >
-        <Link href="/" aria-label="Nexubot home">
+        <Link href="/" aria-label="Nexubot Systems home">
           <Logo />
         </Link>
 
