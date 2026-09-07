@@ -1,19 +1,15 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'COMPLETE', 'CANCELLED', 'FAILED');
 
-  - You are about to drop the `Licenses` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Transactions` table. If the table is not empty, all the data it contains will be lost.
-  - Added the required column `updatedAt` to the `User` table without a default value. This is not possible if the table is not empty.
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-*/
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
-
--- DropTable
-DROP TABLE "Licenses";
-
--- DropTable
-DROP TABLE "Transactions";
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "License" (
@@ -35,16 +31,24 @@ CREATE TABLE "License" (
 CREATE TABLE "Transaction" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "m_payment_id" TEXT NOT NULL,
+    "pf_payment_id" TEXT,
     "peachPaymentId" TEXT,
-    "amount" DOUBLE PRECISION NOT NULL,
-    "currency" TEXT NOT NULL DEFAULT 'ZAR',
-    "productName" TEXT NOT NULL,
+    "amount" DECIMAL(10,2) NOT NULL,
+    "itemName" TEXT NOT NULL,
+    "customerFirst" TEXT NOT NULL,
+    "customerLast" TEXT NOT NULL,
+    "customerEmail" TEXT NOT NULL,
     "status" "TransactionStatus" NOT NULL DEFAULT 'PENDING',
+    "paymentMethod" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "License_licenseKey_key" ON "License"("licenseKey");
@@ -54,6 +58,12 @@ CREATE UNIQUE INDEX "License_transactionId_key" ON "License"("transactionId");
 
 -- CreateIndex
 CREATE INDEX "License_licenseKey_idx" ON "License"("licenseKey");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Transaction_m_payment_id_key" ON "Transaction"("m_payment_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Transaction_pf_payment_id_key" ON "Transaction"("pf_payment_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Transaction_peachPaymentId_key" ON "Transaction"("peachPaymentId");

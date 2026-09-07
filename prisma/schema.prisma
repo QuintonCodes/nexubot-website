@@ -9,7 +9,8 @@ datasource db {
 
 enum TransactionStatus {
   PENDING
-  COMPLETED
+  COMPLETE
+  CANCELLED
   FAILED
 }
 
@@ -48,11 +49,15 @@ model Transaction {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  peachPaymentId String?           @unique
-  amount         Float
-  currency       String            @default("ZAR")
-  productName    String
-  status         TransactionStatus @default(PENDING)
+  m_payment_id   String  @unique @default(uuid())
+  pf_payment_id  String? @unique
+  amount         Decimal @db.Decimal(10, 2)
+  itemName       String
+  customerFirst  String
+  customerLast   String
+  customerEmail  String
+  status         TransactionStatus  @default(PENDING)
+  paymentMethod  String?
 
   license License?
 

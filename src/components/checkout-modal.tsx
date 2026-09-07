@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import {
   AlertTriangle,
   ArrowRight,
@@ -10,11 +11,13 @@ import {
   Lock,
   MonitorSmartphone,
   Server,
+  Smartphone,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import type { Product } from "@/lib/products";
@@ -31,44 +34,11 @@ type AckValues = z.infer<typeof ackSchema>;
 
 /* ---------------- Step 2: payment ---------------- */
 
-const paymentSchema = z
-  .object({
-    method: z.enum(["card", "eft"]),
-    email: z.email("Enter a valid billing email."),
-    cardName: z.string().optional(),
-    cardNumber: z.string().optional(),
-    expiry: z.string().optional(),
-    cvv: z.string().optional(),
-  })
-  .superRefine((val, ctx) => {
-    if (val.method === "card") {
-      if (!val.cardName || val.cardName.trim().length < 2)
-        ctx.addIssue({
-          path: ["cardName"],
-          code: "custom",
-          message: "Cardholder name is required.",
-        });
-      const digits = (val.cardNumber ?? "").replace(/\s/g, "");
-      if (digits.length < 15 || digits.length > 16 || !/^\d+$/.test(digits))
-        ctx.addIssue({
-          path: ["cardNumber"],
-          code: "custom",
-          message: "Enter a valid card number.",
-        });
-      if (!/^\d{2}\/\d{2}$/.test(val.expiry ?? ""))
-        ctx.addIssue({
-          path: ["expiry"],
-          code: "custom",
-          message: "Use MM/YY format.",
-        });
-      if (!/^\d{3,4}$/.test(val.cvv ?? ""))
-        ctx.addIssue({
-          path: ["cvv"],
-          code: "custom",
-          message: "Invalid CVV.",
-        });
-    }
-  });
+const paymentSchema = z.object({
+  firstName: z.string().min(2, "First name is required."),
+  lastName: z.string().min(2, "Last name is required."),
+  email: z.email("Enter a valid billing email."),
+});
 type PaymentValues = z.infer<typeof paymentSchema>;
 
 /* ---------------- shared field styles ---------------- */
@@ -78,33 +48,34 @@ const inputCls =
 const labelCls = "mb-1.5 block text-xs font-medium text-muted-foreground";
 const errCls = "mt-1 text-xs text-destructive";
 
-function formatCardNumber(value: string) {
-  return value
-    .replace(/\D/g, "")
-    .slice(0, 16)
-    .replace(/(.{4})/g, "$1 ")
-    .trim();
-}
-
-function formatExpiry(value: string) {
-  const digits = value.replace(/\D/g, "").slice(0, 4);
-  if (digits.length <= 2) return digits;
-  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-}
-
-/* ---------------- component ---------------- */
-
 export function CheckoutModal({
   product,
   onClose,
-  onSuccess,
 }: {
   product: Product;
   onClose: () => void;
-  onSuccess: () => void;
 }) {
   const [step, setStep] = useState<"prereq" | "payment">("prereq");
   const [submitting, setSubmitting] = useState(false);
+
+  // Reset loading state if user navigates back from PayFast (bfcache or tab visibility restore)
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) setSubmitting(false);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") setSubmitting(false);
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   const ackForm = useForm<AckValues>({
     resolver: zodResolver(ackSchema),
@@ -114,27 +85,52 @@ export function CheckoutModal({
   const payForm = useForm<PaymentValues>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
-      method: "card",
+      firstName: "",
+      lastName: "",
       email: "",
-      cardName: "",
-      cardNumber: "",
-      expiry: "",
-      cvv: "",
     },
-  });
-
-  const method = useWatch({
-    control: payForm.control,
-    name: "method",
   });
 
   const onAck = () => setStep("payment");
 
-  const onPay = async () => {
+  const onPay = async (data: PaymentValues) => {
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1600));
-    setSubmitting(false);
-    onSuccess();
+    try {
+      const response = await axios.post("/api/payfast/checkout", {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        amount: product.price,
+        productName: product.name,
+        productId: product.id,
+      });
+
+      const { payload, url } = response.data;
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = url;
+
+      Object.entries(payload).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value as string;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+
+      // Fallback timeout in case the form submission hangs on the browser level
+      setTimeout(() => setSubmitting(false), 8000);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Failed to connect to the payment gateway. Please try again.",
+      );
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -299,161 +295,62 @@ export function CheckoutModal({
                   </p>
                 </div>
 
-                {/* method toggle */}
-                <div className="grid grid-cols-2 gap-2">
-                  {(
-                    [
-                      { key: "card", label: "Card", icon: CreditCard },
-                      { key: "eft", label: "Bank Transfer", icon: Building2 },
-                    ] as const
-                  ).map((m) => {
-                    const Icon = m.icon;
-                    const active = method === m.key;
-                    return (
-                      <button
-                        type="button"
-                        key={m.key}
-                        onClick={() => payForm.setValue("method", m.key)}
-                        className={cn(
-                          "cursor-pointer flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors",
-                          active
-                            ? "border-brand-green bg-brand-green-soft text-foreground"
-                            : "border-border bg-secondary/40 text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {m.label}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div>
-                  <label className={labelCls}>Billing Email</label>
-                  <input
-                    type="email"
-                    placeholder="you@email.com"
-                    className={inputCls}
-                    {...payForm.register("email")}
-                  />
-                  {payForm.formState.errors.email && (
-                    <p className={errCls}>
-                      {payForm.formState.errors.email.message}
-                    </p>
-                  )}
-                </div>
-
-                {method === "card" ? (
-                  <div className="space-y-4">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className={labelCls}>Cardholder Name</label>
+                      <label className={labelCls}>First Name</label>
                       <input
-                        placeholder="Jane Trader"
+                        placeholder="Jane"
                         className={inputCls}
-                        {...payForm.register("cardName")}
+                        {...payForm.register("firstName")}
                       />
-                      {payForm.formState.errors.cardName && (
+                      {payForm.formState.errors.firstName && (
                         <p className={errCls}>
-                          {payForm.formState.errors.cardName.message}
+                          {payForm.formState.errors.firstName.message}
                         </p>
                       )}
                     </div>
                     <div>
-                      <label className={labelCls}>Card Number</label>
-                      <div className="relative">
-                        <input
-                          inputMode="numeric"
-                          placeholder="4242 4242 4242 4242"
-                          className={cn(inputCls, "pr-10")}
-                          {...payForm.register("cardNumber")}
-                          onChange={(e) =>
-                            payForm.setValue(
-                              "cardNumber",
-                              formatCardNumber(e.target.value),
-                              {
-                                shouldValidate: payForm.formState.isSubmitted,
-                              },
-                            )
-                          }
-                        />
-                        <CreditCard className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                      </div>
-                      {payForm.formState.errors.cardNumber && (
+                      <label className={labelCls}>Last Name</label>
+                      <input
+                        placeholder="Trader"
+                        className={inputCls}
+                        {...payForm.register("lastName")}
+                      />
+                      {payForm.formState.errors.lastName && (
                         <p className={errCls}>
-                          {payForm.formState.errors.cardNumber.message}
+                          {payForm.formState.errors.lastName.message}
                         </p>
                       )}
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className={labelCls}>Expiry</label>
-                        <input
-                          inputMode="numeric"
-                          placeholder="MM/YY"
-                          className={inputCls}
-                          {...payForm.register("expiry")}
-                          onChange={(e) =>
-                            payForm.setValue(
-                              "expiry",
-                              formatExpiry(e.target.value),
-                              {
-                                shouldValidate: payForm.formState.isSubmitted,
-                              },
-                            )
-                          }
-                        />
-                        {payForm.formState.errors.expiry && (
-                          <p className={errCls}>
-                            {payForm.formState.errors.expiry.message}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <label className={labelCls}>CVV</label>
-                        <input
-                          inputMode="numeric"
-                          placeholder="123"
-                          maxLength={4}
-                          className={inputCls}
-                          {...payForm.register("cvv")}
-                        />
-                        {payForm.formState.errors.cvv && (
-                          <p className={errCls}>
-                            {payForm.formState.errors.cvv.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {[
-                      {
-                        bank: "FNB",
-                        acc: "Nexubot Systems Holdings · 6299 1180 774",
-                      },
-                    ].map((b) => (
-                      <div
-                        key={b.bank}
-                        className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 px-4 py-3"
-                      >
-                        <Building2 className="h-5 w-5 text-brand-blue" />
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            {b.bank}
-                          </p>
-                          <p className="font-mono text-xs text-muted-foreground">
-                            {b.acc}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    <p className="text-xs leading-relaxed text-muted-foreground">
-                      Use your billing email as the payment reference. Your
-                      license activates automatically once the transfer clears.
-                    </p>
+
+                  <div>
+                    <label className={labelCls}>Billing Email</label>
+                    <input
+                      type="email"
+                      placeholder="you@email.com"
+                      className={inputCls}
+                      {...payForm.register("email")}
+                    />
+                    {payForm.formState.errors.email && (
+                      <p className={errCls}>
+                        {payForm.formState.errors.email.message}
+                      </p>
+                    )}
                   </div>
-                )}
+                </div>
+
+                <div className="rounded-xl border border-border bg-secondary/30 p-4">
+                  <p className="mb-3 text-xs font-semibold text-foreground text-center">
+                    Supported Payment Methods via PayFast
+                  </p>
+                  <div className="flex justify-center gap-4 text-muted-foreground">
+                    <CreditCard className="h-5 w-5" />
+                    <Building2 className="h-5 w-5" />
+                    <Smartphone className="h-5 w-5" />
+                  </div>
+                </div>
 
                 <button
                   type="submit"
@@ -463,20 +360,15 @@ export function CheckoutModal({
                   {submitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Processing securely…
+                      Initializing Gateway…
                     </>
                   ) : (
                     <>
                       <Lock className="h-4 w-4" />
-                      Pay {product.price}
+                      Proceed to Secure PayFast Checkout
                     </>
                   )}
                 </button>
-
-                <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
-                  <Lock className="h-3 w-3" />
-                  Encrypted by Peach Payments · PCI-DSS compliant
-                </div>
               </motion.form>
             )}
           </AnimatePresence>

@@ -15,11 +15,15 @@ import { toast } from "sonner";
 import type { Product } from "@/lib/products";
 import { metrics } from "@/lib/products";
 
-const LICENSE_KEY = "NEXU-1Z45-7F42-A91C-38DE";
-
-export function SuccessDashboard({ product }: { product: Product }) {
+export function SuccessDashboard({
+  product,
+  licenseKey,
+}: {
+  product: Product;
+  licenseKey: string;
+}) {
   async function copyLicenseKey() {
-    await navigator.clipboard.writeText(LICENSE_KEY);
+    await navigator.clipboard.writeText(licenseKey);
     toast.success("License key copied to clipboard");
   }
 
@@ -31,7 +35,7 @@ export function SuccessDashboard({ product }: { product: Product }) {
   ];
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8 text-foreground sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background text-foreground px-4 pb-16 pt-32 sm:px-6 lg:pt-40">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 border-b border-border pb-6">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-green/30 bg-brand-green-soft px-3 py-1.5 text-xs font-semibold text-brand-green">
@@ -59,7 +63,7 @@ export function SuccessDashboard({ product }: { product: Product }) {
                 <ShieldCheck className="h-5 w-5 text-brand-green" />
               </div>
               <div className="flex items-center justify-between rounded-xl border border-brand-green/20 bg-secondary/60 p-4 font-mono text-sm">
-                {LICENSE_KEY}
+                {licenseKey}
                 <button
                   aria-label="Copy license key"
                   onClick={copyLicenseKey}
