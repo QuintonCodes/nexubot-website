@@ -1,14 +1,6 @@
-import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
-
-// Configure Cloudinary instance securely
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -38,18 +30,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const fileKey = license.productName.toLowerCase().includes("ict")
-      ? "nexubot-ict"
-      : "nexubot-poi";
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || "djyh1j8bs";
 
-    const publicId = `nexubot-systems/${fileKey}.zip`;
-    const url = cloudinary.url(publicId, {
-      resource_type: "raw",
-      flags: "attachment",
-    });
+    // Map to your exact Cloudinary upload URLs with the fl_attachment flag injected
+    const isIct = license.productName.toLowerCase().includes("ict");
+    const cleanUrl = isIct
+      ? `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856981/nexubot-ict_dpv5ve.zip`
+      : `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856982/nexubot-poi_hwauwo.zip`;
 
-    // 302 Redirect forces the browser to hit the secure CDN URL and start downloading
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(cleanUrl);
   } catch (error) {
     console.error("Secure download error:", error);
     return NextResponse.json(

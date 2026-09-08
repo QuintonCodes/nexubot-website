@@ -1,4 +1,3 @@
-import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -10,16 +9,13 @@ export async function POST(request: NextRequest) {
   try {
     const { email, productName, licenseKey } = await request.json();
 
-    // Dynamically assign correct ZIP file based on product name mapping
-    const fileKey = productName.toLowerCase().includes("ict")
-      ? "nexubot-ict"
-      : "nexubot-poi";
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || "djyh1j8bs";
+    const isIct = productName.toLowerCase().includes("ict");
 
-    const publicId = `nexubot-systems/${fileKey}.zip`;
-    const downloadUrl = cloudinary.url(publicId, {
-      resource_type: "raw",
-      flags: "attachment",
-    });
+    // Explicitly use the discovered URLs
+    const downloadUrl = isIct
+      ? `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856981/nexubot-ict_dpv5ve.zip`
+      : `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856982/nexubot-poi_hwauwo.zip`;
 
     const senderEmail =
       process.env.CURRENT_ENV === "production"
@@ -34,7 +30,7 @@ export async function POST(request: NextRequest) {
       react: DeliveryEmail({ productName, licenseKey, downloadUrl }),
       attachments: [
         {
-          filename: `${fileKey}.zip`,
+          filename: isIct ? "nexubot-ict.zip" : "nexubot-poi.zip",
           path: downloadUrl, // Resend automatically streams and attaches the file from Cloudinary
         },
       ],

@@ -25,10 +25,20 @@ export function SuccessDashboard({
 }) {
   const downloadUrl = `/api/download?key=${licenseKey}`;
 
+  // Helper function to download without redirecting the tab
+  const triggerDownload = (url: string) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = ""; // Instructs the browser to handle this as a download
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   useEffect(() => {
     // Initiate automatic download 2.5 seconds after component mounts
     const timeout = setTimeout(() => {
-      window.location.assign(downloadUrl);
+      triggerDownload(downloadUrl);
       toast.success("Package download initiated", {
         description: "Check your downloads folder.",
       });
@@ -43,7 +53,7 @@ export function SuccessDashboard({
   }
 
   function handleManualDownload() {
-    window.location.assign(downloadUrl);
+    triggerDownload(downloadUrl);
   }
 
   const cards = [
