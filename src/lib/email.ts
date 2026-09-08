@@ -25,7 +25,7 @@ export async function sendContactEmail(data: {
     from: senderEmail,
     to: recipientEmail,
     replyTo: data.email,
-    subject: `New Support Inquiry: ${data.topic} - ${data.name}`,
+    subject: `New Support Inquiry: ${data.topic.charAt(0).toUpperCase() + data.topic.slice(1)} - ${data.name}`,
     react: React.createElement(ContactEmail, data),
   });
 }
