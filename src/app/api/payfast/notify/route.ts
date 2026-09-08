@@ -83,11 +83,16 @@ export async function POST(req: NextRequest) {
       // 4. Trigger Delivery Email Asynchronously
       if (updatedTransaction.license) {
         try {
-          await sendDeliveryEmail({
+          const emailResponse = await sendDeliveryEmail({
             email: updatedTransaction.customerEmail,
             productName: updatedTransaction.itemName,
             licenseKey: updatedTransaction.license.licenseKey,
           });
+
+          // Log specific API errors returned by Resend
+          if (emailResponse.error) {
+            console.error("Resend API Error:", emailResponse.error);
+          }
         } catch (emailError) {
           console.error(
             "Critical: DB updated, but delivery email failed:",

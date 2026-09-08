@@ -47,9 +47,12 @@ export async function sendDeliveryEmail(data: {
     ? `Nexubot Systems <${process.env.DELIVERY_FROM_EMAIL}>`
     : "Nexubot Systems <onboarding@resend.dev>";
 
+  // Force recipient to your verified email in non-production environments
+  const recipientEmail = isProd ? data.email : "kagisojiyane28@gmail.com";
+
   return await resend.emails.send({
     from: senderEmail,
-    to: data.email,
+    to: recipientEmail,
     subject: `Your Nexubot Systems EA: ${data.productName}`,
     react: React.createElement(DeliveryEmail, {
       productName: data.productName,
