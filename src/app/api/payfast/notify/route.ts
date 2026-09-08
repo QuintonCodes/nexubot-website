@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
+import { sendDeliveryEmail } from "@/lib/email";
 import { PAYFAST_PASSPHRASE, PAYFAST_VALIDATION_URL } from "@/lib/payfast";
 
 export async function POST(req: NextRequest) {
@@ -61,7 +62,8 @@ export async function POST(req: NextRequest) {
     const mPaymentId = data.m_payment_id;
 
     if (paymentStatus === "COMPLETE") {
-      await db.transaction.update({
+      // Capture the updated transaction and include the license to retrieve the licenseKey
+      const updatedTransaction = await db.transaction.update({
         where: { m_payment_id: mPaymentId },
         data: {
           status: "COMPLETE",
@@ -73,7 +75,19 @@ export async function POST(req: NextRequest) {
             },
           },
         },
+        include: {
+          license: true,
+        },
       });
+
+      // 4. Trigger Delivery Email Asynchronously
+      if (updatedTransaction.license) {
+        await sendDeliveryEmail({
+          email: updatedTransaction.customerEmail,
+          productName: updatedTransaction.itemName,
+          licenseKey: updatedTransaction.license.licenseKey,
+        });
+      }
     } else if (paymentStatus === "FAILED" || paymentStatus === "CANCELLED") {
       await db.transaction.update({
         where: { m_payment_id: mPaymentId },
