@@ -10,6 +10,7 @@ import {
   Terminal,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 import type { Product } from "@/lib/products";
@@ -22,9 +23,27 @@ export function SuccessDashboard({
   product: Product;
   licenseKey: string;
 }) {
+  const downloadUrl = `/api/download?key=${licenseKey}`;
+
+  useEffect(() => {
+    // Initiate automatic download 2.5 seconds after component mounts
+    const timeout = setTimeout(() => {
+      window.location.assign(downloadUrl);
+      toast.success("Package download initiated", {
+        description: "Check your downloads folder.",
+      });
+    }, 2500);
+
+    return () => clearTimeout(timeout);
+  }, [downloadUrl]);
+
   async function copyLicenseKey() {
     await navigator.clipboard.writeText(licenseKey);
     toast.success("License key copied to clipboard");
+  }
+
+  function handleManualDownload() {
+    window.location.assign(downloadUrl);
   }
 
   const cards = [
@@ -145,7 +164,10 @@ export function SuccessDashboard({
                 </button>
               </Link>
             </div>
-            <button className="cursor-pointer inline-flex items-center gap-2 text-sm font-semibold text-brand-green">
+            <button
+              onClick={handleManualDownload}
+              className="cursor-pointer inline-flex items-center gap-2 text-sm font-semibold text-brand-green"
+            >
               <Download className="h-4 w-4" /> Download package
             </button>
           </aside>

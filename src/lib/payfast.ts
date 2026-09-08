@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-export const PAYFAST_IS_PRODUCTION = process.env.PAYFAST_ENV === "production";
+export const PAYFAST_IS_PRODUCTION = process.env.CURRENT_ENV === "production";
 
 export const PAYFAST_MERCHANT_ID = PAYFAST_IS_PRODUCTION
   ? process.env.PAYFAST_MERCHANT_ID || ""

@@ -1,13 +1,47 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().min(2, "Name is required"),
+  email: z.email("Please provide a valid email address"),
+  topic: z.string().min(1, "Topic is required"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+  consent: z.literal(true, {
+    message: "You must accept the conditions",
+  }),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 export function ContactForm() {
   const [sent, setSent] = useState(false);
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSent(true);
-  }
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      topic: "support",
+    },
+  });
+
+  const onSubmit = async (data: ContactFormValues) => {
+    try {
+      await axios.post("/api/emails/contact", data);
+      setSent(true);
+    } catch (error) {
+      console.error("Failed to send message", error);
+      toast.error("Failed to send message. Please try again later.");
+    }
+  };
 
   if (sent)
     return (
@@ -27,39 +61,80 @@ export function ContactForm() {
 
   return (
     <form
-      onSubmit={submit}
+      onSubmit={handleSubmit(onSubmit)}
       className="glass-panel space-y-5 rounded-2xl p-6 sm:p-8"
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2 text-sm font-medium">
           Name
-          <input required name="name" className="field" />
+          <input
+            {...register("name")}
+            className="field"
+            placeholder="Your Name"
+          />
+          {errors.name && (
+            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+          )}
         </label>
         <label className="space-y-2 text-sm font-medium">
           Email
-          <input required type="email" name="email" className="field" />
+          <input
+            {...register("email")}
+            type="email"
+            className="field"
+            placeholder="you@example.com"
+          />
+          {errors.email && (
+            <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+          )}
         </label>
       </div>
       <label className="block space-y-2 text-sm font-medium">
         Topic
-        <select name="topic" className="field">
+        <select {...register("topic")} className="field">
           <option value="support">Product support</option>
           <option value="licensing">Licensing</option>
           <option value="order">Order question</option>
           <option value="general">General enquiry</option>
         </select>
+        {errors.topic && (
+          <p className="text-xs text-red-500 mt-1">{errors.topic.message}</p>
+        )}
       </label>
       <label className="block space-y-2 text-sm font-medium">
         Message
-        <textarea required name="message" rows={6} className="field resize-y" />
+        <textarea
+          {...register("message")}
+          rows={6}
+          className="field resize-y"
+          placeholder="How can we help?"
+        />
+        {errors.message && (
+          <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>
+        )}
       </label>
       <label className="flex items-start gap-3 text-xs leading-5 text-muted-foreground">
-        <input required type="checkbox" className="mt-1 accent-brand-green" />I
-        understand that Nexubot Systems provides software tools, not financial
-        advice, and I will not include sensitive credentials.
+        <input
+          {...register("consent")}
+          type="checkbox"
+          className="mt-1 accent-brand-green"
+        />
+        <div>
+          I understand that Nexubot Systems provides software tools, not
+          financial advice, and I will not include sensitive credentials.
+          {errors.consent && (
+            <p className="text-xs text-red-500 mt-1 block">
+              {errors.consent.message}
+            </p>
+          )}
+        </div>
       </label>
-      <button className="cursor-pointer w-full rounded-xl bg-brand-green px-5 py-3 text-sm font-semibold text-background transition hover:brightness-110">
-        Send message
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="cursor-pointer w-full rounded-xl bg-brand-green px-5 py-3 text-sm font-semibold text-background transition hover:brightness-110"
+      >
+        {isSubmitting ? "Sending..." : "Send message"}
       </button>
     </form>
   );
