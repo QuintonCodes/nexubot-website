@@ -16,7 +16,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Contact email catch block error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: error instanceof Error ? error.message : "Internal server error",
+      },
       { status: 500 },
     );
   }

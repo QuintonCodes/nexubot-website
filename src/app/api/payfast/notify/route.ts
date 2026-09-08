@@ -82,11 +82,18 @@ export async function POST(req: NextRequest) {
 
       // 4. Trigger Delivery Email Asynchronously
       if (updatedTransaction.license) {
-        await sendDeliveryEmail({
-          email: updatedTransaction.customerEmail,
-          productName: updatedTransaction.itemName,
-          licenseKey: updatedTransaction.license.licenseKey,
-        });
+        try {
+          await sendDeliveryEmail({
+            email: updatedTransaction.customerEmail,
+            productName: updatedTransaction.itemName,
+            licenseKey: updatedTransaction.license.licenseKey,
+          });
+        } catch (emailError) {
+          console.error(
+            "Critical: DB updated, but delivery email failed:",
+            emailError,
+          );
+        }
       }
     } else if (paymentStatus === "FAILED" || paymentStatus === "CANCELLED") {
       await db.transaction.update({
