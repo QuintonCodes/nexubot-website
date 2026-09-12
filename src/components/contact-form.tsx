@@ -38,8 +38,11 @@ export function ContactForm() {
       await axios.post("/api/emails/contact", data);
       setSent(true);
     } catch (error) {
-      console.error("Failed to send message", error);
-      toast.error("Failed to send message. Please try again later.");
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Failed to send message. Please try again later.");
+      }
     }
   };
 
@@ -132,7 +135,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="cursor-pointer w-full rounded-xl bg-brand-green px-5 py-3 text-sm font-semibold text-background transition hover:brightness-110"
+        className="cursor-pointer w-full rounded-xl bg-brand-green px-5 py-3 text-sm font-semibold text-background transition hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {isSubmitting ? "Sending..." : "Send message"}
       </button>

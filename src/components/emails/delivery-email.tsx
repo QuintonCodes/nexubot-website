@@ -1,6 +1,5 @@
 import {
   Body,
-  Button,
   Container,
   Head,
   Heading,
@@ -11,18 +10,15 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
 
 type DeliveryEmailProps = {
   productName: string;
   licenseKey: string;
-  downloadUrl: string;
 };
 
 export default function DeliveryEmail({
   productName,
   licenseKey,
-  downloadUrl,
 }: DeliveryEmailProps) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
 
@@ -66,13 +62,6 @@ export default function DeliveryEmail({
           <Section style={licenseCard}>
             <Text style={fieldLabel}>License Key</Text>
             <Text style={licenseCode}>{licenseKey}</Text>
-          </Section>
-
-          {/* Action Button */}
-          <Section style={buttonSection}>
-            <Button href={downloadUrl} style={button}>
-              Download Package Now
-            </Button>
           </Section>
 
           {/* Footer */}
@@ -188,22 +177,6 @@ const licenseCode = {
   fontFamily: "ui-monospace, 'SFMono-Regular', 'Menlo', monospace",
   margin: "0",
   wordBreak: "break-all" as const,
-};
-
-const buttonSection = {
-  marginTop: "12px",
-  marginBottom: "32px",
-};
-
-const button = {
-  backgroundColor: "#03c963",
-  color: "#06180d",
-  padding: "12px 24px",
-  borderRadius: "8px",
-  fontWeight: "600",
-  fontSize: "14px",
-  textDecoration: "none",
-  display: "inline-block",
 };
 
 const footerText = {

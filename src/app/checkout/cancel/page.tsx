@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function CheckoutCancelPage() {
   return (
-    <main className="flex min-h-[calc(100vh-180px)] items-center px-5 py-16 sm:px-8">
+    <main className="flex min-h-screen items-center px-4 pb-16 pt-32 sm:px-6 lg:pt-40">
       <div className="mx-auto w-full max-w-xl text-center">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-blue/30 bg-brand-blue/10 text-brand-blue">
           <CircleAlert className="h-8 w-8" />

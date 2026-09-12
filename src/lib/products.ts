@@ -41,27 +41,18 @@ export const products: Product[] = [
   },
 ];
 
-export const metrics = {
-  roi: "+258.58%",
-  profitFactor: "2.42",
-  winRate: 77.31,
-  winTrades: 92,
-  totalTrades: 119,
-  maxDrawdownPct: "19.70%",
-};
-
 export const advisorMetrics = {
   ict: {
     name: "Nexubot ICT",
     subtitle: "OTE continuation system",
-    roi: metrics.roi,
-    profit: metrics.profitFactor,
-    win: metrics.winRate,
-    dd: metrics.maxDrawdownPct,
-    trades: metrics.totalTrades,
+    roi: "+194.33%",
+    profit: "4.62",
+    win: 71.43,
+    dd: "7.92%",
+    trades: 56,
     curve: [
-      28, 30, 29, 34, 37, 35, 42, 45, 47, 46, 54, 57, 61, 60, 68, 72, 75, 82,
-      88, 94,
+      28, 30, 34, 38, 41, 35, 42, 45, 47, 46, 54, 57, 61, 60, 65, 76, 77, 85,
+      90, 96,
     ],
   },
   poi: {

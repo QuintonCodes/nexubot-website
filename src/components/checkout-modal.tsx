@@ -5,13 +5,11 @@ import axios from "axios";
 import {
   AlertTriangle,
   ArrowRight,
-  Building2,
-  CreditCard,
   Loader2,
   Lock,
   MonitorSmartphone,
   Server,
-  Smartphone,
+  ShieldCheck,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -57,8 +55,9 @@ export function CheckoutModal({
 }) {
   const [step, setStep] = useState<"prereq" | "payment">("prereq");
   const [submitting, setSubmitting] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-  // Reset loading state if user navigates back from PayFast (bfcache or tab visibility restore)
+  // Resets loading state if user navigates back from Whop (bfcache or tab visibility restore)
   useEffect(() => {
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) setSubmitting(false);
@@ -95,40 +94,37 @@ export function CheckoutModal({
 
   const onPay = async (data: PaymentValues) => {
     setSubmitting(true);
+    setCheckoutError(null);
     try {
-      const response = await axios.post("/api/payfast/checkout", {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        amount: product.price,
-        productName: product.name,
+      const response = await axios.post("/api/whop/checkout", {
         productId: product.id,
+        productName: product.name,
+        amount: product.price,
+        ...data,
       });
 
-      const { payload, url } = response.data;
+      const { checkoutUrl } = response.data;
 
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = url;
+      if (response.status !== 200 && !checkoutUrl) {
+        throw new Error("Unable to start Whop checkout.");
+      }
 
-      Object.entries(payload).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value as string;
-        form.appendChild(input);
-      });
-
-      document.body.appendChild(form);
-      form.submit();
-
-      // Fallback timeout in case the form submission hangs on the browser level
-      setTimeout(() => setSubmitting(false), 8000);
+      // Always navigate in the same tab for smooth return_url behavior
+      window.location.href = checkoutUrl;
     } catch (error) {
       console.error(error);
-      toast.error(
-        "Failed to connect to the payment gateway. Please try again.",
-      );
+
+      // Extract specific server errors (like the 429 Cooldown)
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        const serverError = error.response.data.error;
+        toast.error(serverError);
+        setCheckoutError(serverError);
+      } else {
+        const fallbackError =
+          "Payment gateway unavailable. Please try again later.";
+        toast.error(fallbackError);
+        setCheckoutError(fallbackError);
+      }
       setSubmitting(false);
     }
   };
@@ -194,7 +190,7 @@ export function CheckoutModal({
           ))}
         </div>
 
-        <div className="max-h-[65vh] overflow-y-auto px-5 py-5">
+        <div className="max-h-[70vh] overflow-y-auto px-5 py-5">
           <AnimatePresence mode="wait">
             {step === "prereq" ? (
               <motion.form
@@ -209,7 +205,8 @@ export function CheckoutModal({
                 <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2.5">
                   <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
                   <p className="text-xs font-medium text-foreground">
-                    Read the hardware prerequisites carefully before purchasing.
+                    Please select your preferred deployment method before
+                    purchasing.
                   </p>
                 </div>
 
@@ -218,12 +215,13 @@ export function CheckoutModal({
                     <Server className="mt-0.5 h-5 w-5 shrink-0 text-brand-green" />
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        Running Environment
+                        Option 1: Traditional VPS (Maximum Control)
                       </p>
                       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        A Virtual Private Server (VPS) running a Windows Server
-                        OS 24/7 is mandatory to execute trades without
-                        disruption.
+                        Deploy on a 24/7 Windows Virtual Private Server.
+                        Requires initial setup via a desktop OS. Best for
+                        advanced traders who want full control over server
+                        uptime and broker latency.
                       </p>
                     </div>
                   </div>
@@ -234,12 +232,13 @@ export function CheckoutModal({
                     <MonitorSmartphone className="mt-0.5 h-5 w-5 shrink-0 text-brand-blue" />
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        Setup Prerequisites
+                        Option 2: Mobile Management (Maximum Convenience)
                       </p>
                       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        Initial installation requires a physical desktop OS
-                        (Windows PC/Laptop or Mac with Windows virtualization).
-                        Cannot be operated via mobile.
+                        Use a third-party app like EAConnect to monitor and
+                        intervene directly from your phone. Nexubot retains full
+                        control of your license key natively; mobile platforms
+                        are used purely for remote management.
                       </p>
                     </div>
                   </div>
@@ -252,8 +251,9 @@ export function CheckoutModal({
                     className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#03c963]"
                   />
                   <span className="text-xs leading-relaxed text-foreground">
-                    I understand and confirm I have access to the required VPS
-                    and desktop environment to run this algorithm.
+                    I understand the deployment options and confirm I will
+                    arrange either a VPS or a mobile hosting bridge to run this
+                    algorithm.
                   </span>
                 </label>
                 {ackForm.formState.errors.acknowledged && (
@@ -295,11 +295,27 @@ export function CheckoutModal({
                   </p>
                 </div>
 
+                <div className="rounded-xl border border-brand-blue/30 bg-brand-blue/10 p-4">
+                  <div className="flex items-start gap-3">
+                    <ShieldCheck className="h-5 w-5 shrink-0 text-brand-blue" />
+                    <div>
+                      <p className="text-sm font-semibold">
+                        Payment powered by Whop
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        You will be redirected to Whop to choose your preferred
+                        payment method and complete checkout securely.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className={labelCls}>First Name</label>
                       <input
+                        autoComplete="given-name"
                         placeholder="Jane"
                         className={inputCls}
                         {...payForm.register("firstName")}
@@ -313,6 +329,7 @@ export function CheckoutModal({
                     <div>
                       <label className={labelCls}>Last Name</label>
                       <input
+                        autoComplete="family-name"
                         placeholder="Trader"
                         className={inputCls}
                         {...payForm.register("lastName")}
@@ -339,17 +356,15 @@ export function CheckoutModal({
                       </p>
                     )}
                   </div>
-                </div>
 
-                <div className="rounded-xl border border-border bg-secondary/30 p-4">
-                  <p className="mb-3 text-xs font-semibold text-foreground text-center">
-                    Supported Payment Methods via PayFast
-                  </p>
-                  <div className="flex justify-center gap-4 text-muted-foreground">
-                    <CreditCard className="h-5 w-5" />
-                    <Building2 className="h-5 w-5" />
-                    <Smartphone className="h-5 w-5" />
-                  </div>
+                  {checkoutError && (
+                    <p
+                      role="alert"
+                      className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+                    >
+                      {checkoutError}
+                    </p>
+                  )}
                 </div>
 
                 <button
@@ -360,15 +375,19 @@ export function CheckoutModal({
                   {submitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Initializing Gateway…
+                      Opening secure Whop checkout…
                     </>
                   ) : (
                     <>
                       <Lock className="h-4 w-4" />
-                      Proceed to Secure PayFast Checkout
+                      Continue to Whop · {product.price}
                     </>
                   )}
                 </button>
+                <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
+                  <Lock className="h-3 w-3" />
+                  Secure payment handled by Whop
+                </div>
               </motion.form>
             )}
           </AnimatePresence>

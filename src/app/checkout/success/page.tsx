@@ -29,7 +29,7 @@ export default async function CheckoutSuccessPage({
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-brand-green border-t-transparent" />
           <h1 className="text-xl font-semibold">Verifying Payment</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            We are waiting for PayFast to confirm your transaction. This usually
+            We are waiting for Whop to confirm your transaction. This usually
             takes a few seconds. Please refresh this page shortly.
           </p>
         </div>

@@ -57,7 +57,6 @@ export async function sendDeliveryEmail(data: {
     react: React.createElement(DeliveryEmail, {
       productName: data.productName,
       licenseKey: data.licenseKey,
-      downloadUrl,
     }),
     attachments: [
       {

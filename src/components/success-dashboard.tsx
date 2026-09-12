@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import type { Product } from "@/lib/products";
-import { metrics } from "@/lib/products";
+import { advisorMetrics } from "@/lib/products";
 
 export function SuccessDashboard({
   product,
@@ -56,11 +56,15 @@ export function SuccessDashboard({
     triggerDownload(downloadUrl);
   }
 
+  // Dynamically extract the specific metrics based on the product ID
+  const isIct = product.id === "nexubot-ict";
+  const currentMetrics = isIct ? advisorMetrics.ict : advisorMetrics.poi;
+
   const cards = [
-    ["ROI", metrics.roi],
-    ["Win rate", `${metrics.winRate}%`],
-    ["Profit Factor", metrics.profitFactor],
-    ["Max drawdown", metrics.maxDrawdownPct],
+    ["ROI", currentMetrics.roi],
+    ["Win rate", `${currentMetrics.win}%`],
+    ["Profit Factor", currentMetrics.profit],
+    ["Max drawdown", currentMetrics.dd],
   ];
 
   return (
