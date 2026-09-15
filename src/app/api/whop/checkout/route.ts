@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { db } from "@/lib/db";
-import { sendDeliveryEmail } from "@/lib/email";
 import { generateLicenseKey } from "@/lib/license";
 
 const checkoutRequestSchema = z.object({
@@ -42,7 +41,9 @@ export async function POST(req: NextRequest) {
       email,
     } = parsed.data;
 
-    // Fetch existing transaction states for this product & email
+    const isDevMode = process.env.CURRENT_ENV === "development";
+
+    // 1. Fetch existing transaction states for this product & email
     const existingTransactions = await db.transaction.findMany({
       where: {
         user: { email },
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 1. Prevent double purchases if they already own it
+    // 2. Prevent double purchases if they already own it
     const hasCompleted = existingTransactions.some(
       (tx) => tx.status === "COMPLETE",
     );
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Cleanup orphaned checkouts (e.g., user clicked back button on Whop)
+    // 3. Cleanup orphaned checkouts
     const pendingTxIds = existingTransactions
       .filter((tx) => tx.status === "PENDING")
       .map((tx) => tx.id);
@@ -79,16 +80,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const isDevMode = process.env.CURRENT_ENV === "development";
     const licenseKey = generateLicenseKey();
 
-    // Register transaction (Auto-complete if in dev mode)
+    // 4. Register transaction as PENDING to await webhook fulfillment
     const transaction = await db.transaction.create({
       data: {
         amount: numericAmount,
         productName,
-        status: isDevMode ? "COMPLETE" : "PENDING",
-        whopPaymentId: isDevMode ? `dev_mock_${Date.now()}` : undefined,
+        status: "PENDING",
         user: {
           connectOrCreate: {
             where: { email },
@@ -99,7 +98,7 @@ export async function POST(req: NextRequest) {
           create: {
             licenseKey,
             productName,
-            isActive: isDevMode,
+            isActive: false,
             user: {
               connectOrCreate: {
                 where: { email },
@@ -111,60 +110,69 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Pass transaction ID directly into return URLs for state continuity
-    const returnUrl = new URL(`${req.nextUrl.origin}/checkout/success`);
-    returnUrl.searchParams.set("product", productId);
-    returnUrl.searchParams.set("key", licenseKey);
-
-    // Short-circuit to success page and trigger email in Dev Mode
-    if (isDevMode) {
-      const emailResponse = await sendDeliveryEmail({
-        email,
-        productName,
-        licenseKey,
-      });
-
-      if (emailResponse.error) {
-        console.error("Dev mode email simulation failed:", emailResponse.error);
-      }
-
-      return NextResponse.json({
-        checkoutUrl: returnUrl.toString(),
-        transactionId: transaction.id,
-      });
-    }
-
-    // Map plans via environment variables, defaulting to known plan IDs
-    const configuredPlans: Record<string, string> = {
-      "nexubot-ict":
-        process.env.WHOP_PRODUCT_ID_NEXUBOT_ICT || "plan_3PZUYjHK2f8wT",
-      "nexubot-poi":
-        process.env.WHOP_PRODUCT_ID_NEXUBOT_POI || "plan_Gv1jeJPjX5xFj",
-    };
+    // 5. Configure Plan IDs dynamically based on CURRENT_ENV
+    const configuredPlans: Record<string, string | undefined> = isDevMode
+      ? {
+          "nexubot-ict":
+            process.env.WHOP_SANDBOX_PRODUCT_ID_NEXUBOT_ICT ||
+            "plan_776HiYv4jdbhv",
+          "nexubot-poi":
+            process.env.WHOP_SANDBOX_PRODUCT_ID_NEXUBOT_POI ||
+            "plan_5tfjgHEuSK46T",
+        }
+      : {
+          "nexubot-ict":
+            process.env.WHOP_PRODUCT_ID_NEXUBOT_ICT || "plan_3PZUYjHK2f8wT",
+          "nexubot-poi":
+            process.env.WHOP_PRODUCT_ID_NEXUBOT_POI || "plan_Gv1jeJPjX5xFj",
+        };
 
     const planValue = configuredPlans[productId];
     if (!planValue) {
       return NextResponse.json(
-        { error: "Invalid product ID" },
+        { error: "Invalid product ID configured" },
         { status: 400 },
       );
     }
 
-    // Build the Whop checkout URL with dynamic tracking
-    const checkoutUrl = new URL(`https://whop.com/checkout/${planValue}`);
+    const checkoutHost = isDevMode
+      ? "https://sandbox.whop.com"
+      : "https://whop.com";
+
+    // 6. Build the Whop checkout URL with dynamic tracking
+    const checkoutUrl = new URL(`${checkoutHost}/checkout/${planValue}`);
     checkoutUrl.searchParams.set("first_name", firstName);
     checkoutUrl.searchParams.set("last_name", lastName);
     checkoutUrl.searchParams.set("email", email);
+
+    // Inject transaction id into Whop payload tracking
+    checkoutUrl.searchParams.set("custom_transaction_id", transaction.id);
+
+    const returnUrl = new URL(`${req.nextUrl.origin}/checkout/success`);
+    returnUrl.searchParams.set("product", productId);
+    returnUrl.searchParams.set("key", licenseKey);
 
     const cancelUrl = new URL(`${req.nextUrl.origin}/checkout/cancel`);
 
     checkoutUrl.searchParams.set("return_url", returnUrl.toString());
     checkoutUrl.searchParams.set("cancel_url", cancelUrl.toString());
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       checkoutUrl: checkoutUrl.toString(),
       transactionId: transaction.id,
     });
+
+    // 7. Set a secure HTTP cookie to track this specific transaction ID.
+    // This entirely bypasses Whop aggressively stripping query parameters on redirect.
+    response.cookies.set("pending_tx_id", transaction.id, {
+      path: "/",
+      maxAge: 60 * 60 * 2, // 2 hours
+      httpOnly: true,
+      secure: !isDevMode,
+      sameSite: "lax",
+    });
+
+    return response;
   } catch (error) {
     console.error("Whop checkout error:", error);
     return NextResponse.json(

@@ -40,8 +40,8 @@ export async function sendDeliveryEmail(data: {
   const isIct = data.productName.toLowerCase().includes("ict");
 
   const downloadUrl = isIct
-    ? `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856981/nexubot-ict_dpv5ve.zip`
-    : `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856982/nexubot-poi_hwauwo.zip`;
+    ? `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1789386004/nexubot-ict_dpv5ve.zip`
+    : `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1789385985/nexubot-poi_hwauwo.zip`;
 
   const senderEmail = isProd
     ? `Nexubot Systems <${process.env.DELIVERY_FROM_EMAIL}>`

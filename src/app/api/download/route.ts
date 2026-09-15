@@ -45,8 +45,8 @@ export async function GET(request: NextRequest) {
     // Map to your exact Cloudinary upload URLs with the fl_attachment flag injected
     const isIct = license.productName.toLowerCase().includes("ict");
     const cleanUrl = isIct
-      ? `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856981/nexubot-ict_dpv5ve.zip`
-      : `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1788856982/nexubot-poi_hwauwo.zip`;
+      ? `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1789386004/nexubot-ict_dpv5ve.zip`
+      : `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment/v1789385985/nexubot-poi_hwauwo.zip`;
 
     // Prevent caching of this endpoint so revoked keys instantly lose access
     const response = NextResponse.redirect(cleanUrl);
